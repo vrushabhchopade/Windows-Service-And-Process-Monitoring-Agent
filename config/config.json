@@ -1,0 +1,39 @@
+{
+  "backend_url": "http://10.197.136.199:8000",
+  "api_version": "v1",
+  "agent_id": "WIN-EDR-AGENT-01",
+
+  "auth": {
+    "username": "agent_service",
+    "password": "AgentSecurePassword123!"
+  },
+
+  "enrollment": {
+    "token": "YOUR_ENROLLMENT_TOKEN_HERE"
+  },
+
+  "monitoring": {
+    "process_interval_seconds": 3,
+    "service_interval_seconds": 1,
+    "eventlog_interval_seconds": 10,
+    "systemhealth_interval_seconds": 1,
+    "ioc_sync_interval_seconds": 1,
+    "heartbeat_interval_seconds": 3
+  },
+
+  "detection": {
+    "cpu_threshold_percent": 85.0,
+    "memory_threshold_percent": 90.0,
+    "flag_temp_execution": true,
+    "flag_lolbins": true,
+    "flag_unsigned": true
+  },
+
+  "logging": {
+    "level": "INFO",
+    "log_to_file": true,
+    "log_file_path": "logs/agent.log",
+    "max_bytes": 10485760,
+    "backup_count": 5
+  }
+}

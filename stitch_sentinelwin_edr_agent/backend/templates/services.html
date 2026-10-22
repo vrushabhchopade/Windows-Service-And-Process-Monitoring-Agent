@@ -1,0 +1,612 @@
+{% extends "base.html" %}
+
+{% block title %}Windows Service Audit - Stitch Sentinel EDR{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h4 class="fw-bold text-cyan mb-1">
+            <i class="fa-solid fa-gears me-2"></i>
+            Startup & Windows Service Auditor
+        </h4>
+
+        <div class="text-muted small">
+            Continuous auditing of installed Windows services,
+            persistence paths, startup types, and security service statuses
+        </div>
+
+        <!-- LIVE STATUS -->
+        <div class="mt-2">
+            <span id="live-status" class="text-success small fw-bold">
+                <i class="fa-solid fa-circle"></i>
+                LIVE · Updating every 1 second
+            </span>
+
+            <span id="service-count" class="text-muted small ms-3">
+                0 services
+            </span>
+        </div>
+    </div>
+
+
+    <div class="d-flex gap-2">
+
+        <button
+            class="cyber-btn-outline"
+            onclick="filterServices('all')">
+            All Services
+        </button>
+
+        <button
+            class="cyber-btn-outline text-warning border-warning"
+            onclick="filterServices('suspicious')">
+            Suspicious Services
+        </button>
+
+        <button
+            class="cyber-btn-primary"
+            onclick="loadServices()">
+            <i class="fa-solid fa-rotate me-1"></i>
+            Refresh
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- LIVE SERVICES TABLE -->
+
+<div class="cyber-card">
+
+    <div class="table-responsive">
+
+        <table class="cyber-table">
+
+            <thead>
+                <tr>
+                    <th>Service Name</th>
+                    <th>Display Name</th>
+                    <th>Status</th>
+                    <th>Startup Type</th>
+                    <th>Service Account</th>
+                    <th>Binary Path</th>
+                    <th>Audit Flags</th>
+                </tr>
+            </thead>
+
+            <tbody id="services-tbody">
+
+                <tr>
+                    <td colspan="7"
+                        class="text-center text-muted">
+
+                        <i class="fa-solid fa-spinner fa-spin me-2"></i>
+
+                        Loading Windows services...
+
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<!-- LIVE UPDATE ANIMATION -->
+
+<style>
+
+.service-live-update {
+    animation: serviceFlash 0.45s ease-in-out;
+}
+
+@keyframes serviceFlash {
+
+    0% {
+        opacity: 0.35;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 1;
+    }
+
+}
+
+
+.live-active {
+    animation: livePulse 1s infinite;
+}
+
+@keyframes livePulse {
+
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.45;
+    }
+
+    100% {
+        opacity: 1;
+    }
+
+}
+
+</style>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+let currentFilter = "all";
+
+/*
+===========================================================
+INITIAL LOAD
+===========================================================
+*/
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    loadServices();
+
+    /*
+    IMPORTANT:
+    Dashboard automatically refreshes every 1 second.
+    No browser/page reload.
+    */
+
+    setInterval(function () {
+
+        loadServices();
+
+    }, 1000);
+
+});
+
+
+/*
+===========================================================
+LOAD WINDOWS SERVICES
+===========================================================
+*/
+
+function loadServices() {
+
+    let url = "/api/v1/services/live/";
+
+    /*
+    Suspicious filter
+    */
+
+    if (currentFilter === "suspicious") {
+
+        url += "?suspicious=true";
+
+    }
+
+
+    fetch(url, {
+
+        method: "GET",
+
+        cache: "no-store",
+
+        headers: {
+
+            "Cache-Control": "no-cache",
+
+            "Pragma": "no-cache"
+
+        }
+
+    })
+
+    .then(function (response) {
+
+        if (!response.ok) {
+
+            throw new Error(
+                "HTTP Error: " + response.status
+            );
+
+        }
+
+        return response.json();
+
+    })
+
+    .then(function (data) {
+
+        /*
+        Live API returns an array directly.
+        */
+
+        const services = Array.isArray(data)
+            ? data
+            : (data.results || []);
+
+
+        updateLiveStatus(true);
+
+        renderServices(services);
+
+    })
+
+    .catch(function (error) {
+
+        console.error(
+            "Live Services Error:",
+            error
+        );
+
+        updateLiveStatus(false);
+
+    });
+
+}
+
+
+/*
+===========================================================
+RENDER SERVICES TABLE
+===========================================================
+*/
+
+function renderServices(services) {
+
+    const tbody =
+        document.getElementById("services-tbody");
+
+    if (!tbody) {
+
+        return;
+
+    }
+
+
+    /*
+    Service count
+    */
+
+    const countElement =
+        document.getElementById("service-count");
+
+    if (countElement) {
+
+        countElement.innerText =
+            services.length + " services";
+
+    }
+
+
+    /*
+    No services
+    */
+
+    if (services.length === 0) {
+
+        tbody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    class="text-center text-muted">
+
+                    No Windows services found
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    /*
+    Clear old table
+    */
+
+    tbody.innerHTML = "";
+
+
+    /*
+    Add latest service snapshot
+    */
+
+    services.forEach(function (service) {
+
+        const tr =
+            document.createElement("tr");
+
+
+        /*
+        Windows Service Status
+        */
+
+        const isRunning =
+            service.status === "Running";
+
+
+        let statusBadge;
+
+
+        if (isRunning) {
+
+            statusBadge = `
+
+                <span class="badge badge-low">
+
+                    <i class="fa-solid fa-circle me-1"></i>
+
+                    Running
+
+                </span>
+
+            `;
+
+        } else {
+
+            statusBadge = `
+
+                <span class="badge bg-secondary">
+
+                    <i class="fa-solid fa-circle me-1"></i>
+
+                    ${escapeHtml(service.status || "Stopped")}
+
+                </span>
+
+            `;
+
+        }
+
+
+        /*
+        Suspicious service
+        */
+
+        let suspiciousBadge;
+
+
+        if (service.is_suspicious) {
+
+            suspiciousBadge = `
+
+                <span class="badge badge-critical">
+
+                    <i class="fa-solid fa-triangle-exclamation me-1"></i>
+
+                    SUSPICIOUS PATH
+
+                </span>
+
+            `;
+
+        } else {
+
+            suspiciousBadge = `
+
+                <span class="badge badge-low">
+
+                    <i class="fa-solid fa-check me-1"></i>
+
+                    Verified
+
+                </span>
+
+            `;
+
+        }
+
+
+        /*
+        Table row
+        */
+
+        tr.innerHTML = `
+
+            <td class="mono-font fw-bold text-cyan">
+
+                ${escapeHtml(service.service_name)}
+
+            </td>
+
+
+            <td>
+
+                ${escapeHtml(service.display_name)}
+
+            </td>
+
+
+            <td>
+
+                ${statusBadge}
+
+            </td>
+
+
+            <td class="mono-font">
+
+                ${escapeHtml(service.startup_type)}
+
+            </td>
+
+
+            <td class="mono-font text-muted">
+
+                ${escapeHtml(service.service_account)}
+
+            </td>
+
+
+            <td
+                class="mono-font text-truncate small"
+                style="max-width:300px;"
+                title="${escapeHtml(service.binary_path)}">
+
+                ${escapeHtml(service.binary_path)}
+
+            </td>
+
+
+            <td>
+
+                ${suspiciousBadge}
+
+            </td>
+
+        `;
+
+
+        /*
+        Live visual animation
+        */
+
+        tr.classList.add(
+            "service-live-update"
+        );
+
+
+        tbody.appendChild(tr);
+
+    });
+
+}
+
+
+/*
+===========================================================
+FILTER SERVICES
+===========================================================
+*/
+
+function filterServices(type) {
+
+    if (type === "suspicious") {
+
+        currentFilter = "suspicious";
+
+    } else {
+
+        currentFilter = "all";
+
+    }
+
+
+    /*
+    Immediately reload after filter change
+    */
+
+    loadServices();
+
+}
+
+
+/*
+===========================================================
+LIVE STATUS INDICATOR
+===========================================================
+*/
+
+function updateLiveStatus(online) {
+
+    const element =
+        document.getElementById("live-status");
+
+
+    if (!element) {
+
+        return;
+
+    }
+
+
+    if (online) {
+
+        element.className =
+            "text-success small fw-bold live-active";
+
+
+        element.innerHTML = `
+
+            <i class="fa-solid fa-circle"></i>
+
+            LIVE · Updating every 1 second
+
+        `;
+
+    } else {
+
+        element.className =
+            "text-danger small fw-bold";
+
+
+        element.innerHTML = `
+
+            <i class="fa-solid fa-circle"></i>
+
+            BACKEND OFFLINE
+
+        `;
+
+    }
+
+}
+
+
+/*
+===========================================================
+HTML ESCAPE
+===========================================================
+*/
+
+function escapeHtml(text) {
+
+    if (
+        text === null ||
+        text === undefined
+    ) {
+
+        return "";
+
+    }
+
+
+    return String(text)
+
+        .replace(/&/g, "&amp;")
+
+        .replace(/</g, "&lt;")
+
+        .replace(/>/g, "&gt;")
+
+        .replace(/"/g, "&quot;")
+
+        .replace(/'/g, "&#039;");
+
+}
+
+</script>
+
+{% endblock %}

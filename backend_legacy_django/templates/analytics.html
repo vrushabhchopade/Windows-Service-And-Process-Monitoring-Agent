@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}MITRE ATT&CK Analytics - Stitch Sentinel EDR{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold text-cyan mb-1"><i class="fa-solid fa-chart-pie me-2"></i> MITRE ATT&CK & Threat Analytics</h4>
+        <div class="text-muted small">Visual metrics on endpoint threat coverage, Event ID frequencies, and MITRE technique counts</div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="cyber-card h-100">
+            <div class="cyber-card-header">
+                <span><i class="fa-solid fa-shield-cat me-2"></i> Top MITRE ATT&CK Techniques Triggered</span>
+            </div>
+            <div class="table-responsive">
+                <table class="cyber-table">
+                    <thead>
+                        <tr>
+                            <th>MITRE Technique</th>
+                            <th>Detection Category</th>
+                            <th>Trigger Count</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mitre-table-tbody">
+                        <tr><td colspan="3" class="text-center text-muted">Loading MITRE statistics...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="cyber-card h-100">
+            <div class="cyber-card-header">
+                <span><i class="fa-solid fa-list-numeric me-2"></i> Windows Event ID Frequency Distribution</span>
+            </div>
+            <div class="table-responsive">
+                <table class="cyber-table">
+                    <thead>
+                        <tr>
+                            <th>Event ID</th>
+                            <th>Channel / Category</th>
+                            <th>Captured Events</th>
+                        </tr>
+                    </thead>
+                    <tbody id="eventid-table-tbody">
+                        <tr><td colspan="3" class="text-center text-muted">Loading Event ID distribution...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    fetch("/api/v1/analytics/overview/")
+        .then(res => res.json())
+        .then(data => {
+            renderMitreTable(data.mitre_counts || []);
+            renderEventIdTable(data.event_id_counts || []);
+        });
+});
+
+function renderMitreTable(counts) {
+    const tbody = document.getElementById("mitre-table-tbody");
+    if (!tbody) return;
+
+    tbody.innerHTML = "";
+    if (counts.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No MITRE techniques recorded</td></tr>';
+        return;
+    }
+
+    counts.forEach(item => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td><span class="mitre-tag">${escapeHtml(item.mitre_technique || 'T1059')}</span></td>
+            <td>Command & Scripting Interpreter / Security Audit</td>
+            <td class="mono-font fw-bold text-cyan">${item.count} hits</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function renderEventIdTable(counts) {
+    const tbody = document.getElementById("eventid-table-tbody");
+    if (!tbody) return;
+
+    tbody.innerHTML = "";
+    if (counts.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No Event IDs captured</td></tr>';
+        return;
+    }
+
+    counts.forEach(item => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td class="mono-font fw-bold text-cyan">Event ID ${item.event_id}</td>
+            <td>Security / System Log Channel</td>
+            <td class="mono-font fw-bold text-light">${item.count} events</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+</script>
+{% endblock %}

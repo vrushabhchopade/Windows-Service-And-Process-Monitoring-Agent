@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}SOC Overview - Stitch Sentinel EDR{% endblock %}
+
+{% block content %}
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="cyber-card">
+            <div class="cyber-card-header">
+                <span><i class="fa-solid fa-triangle-exclamation me-2"></i> Total Alerts</span>
+                <span class="pulse-critical"></span>
+            </div>
+            <div class="metric-value text-danger" id="metric-total-alerts">0</div>
+            <div class="metric-sub">Active Threat Detections</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="cyber-card">
+            <div class="cyber-card-header">
+                <span><i class="fa-solid fa-microchip me-2"></i> Active Processes</span>
+            </div>
+            <div class="metric-value text-cyan" id="metric-active-procs">0</div>
+            <div class="metric-sub">Running Endpoint Tasks</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="cyber-card">
+            <div class="cyber-card-header">
+                <span><i class="fa-solid fa-gears me-2"></i> Suspicious Services</span>
+            </div>
+            <div class="metric-value text-warning" id="metric-suspicious-svc">0</div>
+            <div class="metric-sub">Flagged Windows Services</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="cyber-card">
+            <div class="cyber-card-header">
+                <span><i class="fa-solid fa-gauge-high me-2"></i> CPU / RAM Load</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="metric-value text-info" id="metric-cpu-percent">0%</div>
+                    <div class="metric-sub">CPU Utilization</div>
+                </div>
+                <div>
+                    <div class="metric-value text-primary" id="metric-ram-percent">0%</div>
+                    <div class="metric-sub">RAM Memory</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-8">
+        <div class="cyber-card h-100">
+            <div class="cyber-card-header">
+                <span><i class="fa-solid fa-chart-area me-2"></i> Real-time Endpoint Resource Telemetry</span>
+                <span class="mono-font text-muted small">Updated Live</span>
+            </div>
+            <div style="height: 260px;">
+                <canvas id="cpuTrendChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="cyber-card h-100">
+            <div class="cyber-card-header">
+                <span><i class="fa-solid fa-chart-pie me-2"></i> Alert Severity Distribution</span>
+            </div>
+            <div style="height: 260px;">
+                <canvas id="severityChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="cyber-card">
+    <div class="cyber-card-header">
+        <span><i class="fa-solid fa-shield-virus me-2"></i> Recent Security Threat Detections</span>
+        <a href="/alerts/" class="cyber-btn-outline py-1 px-2 text-decoration-none">View All Alerts</a>
+    </div>
+    <div class="table-responsive">
+        <table class="cyber-table">
+            <thead>
+                <tr>
+                    <th>Severity</th>
+                    <th>Alert Title</th>
+                    <th>Hostname</th>
+                    <th>MITRE ATT&CK</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody id="recent-alerts-tbody">
+                <tr>
+                    <td colspan="5" class="text-center text-muted">Loading live security alerts...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/dashboard.js"></script>
+{% endblock %}

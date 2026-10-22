@@ -1,0 +1,338 @@
+{% extends "base.html" %}
+
+{% block title %}SOC Overview - Stitch Sentinel EDR{% endblock %}
+
+{% block content %}
+
+<!-- ========================================================= -->
+<!-- TOP METRICS -->
+<!-- ========================================================= -->
+
+<div class="row g-3 mb-4">
+
+    <!-- Total Alerts -->
+    <div class="col-md">
+        <div class="cyber-card h-100">
+            <div class="cyber-card-header">
+                <span>
+                    <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                    Total Alerts
+                </span>
+                <span class="pulse-critical"></span>
+            </div>
+
+            <div class="metric-value text-danger"
+                 id="metric-total-alerts">
+                0
+            </div>
+
+            <div class="metric-sub">
+                Active Threat Detections
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Active Processes -->
+    <div class="col-md">
+        <div class="cyber-card h-100">
+            <div class="cyber-card-header">
+                <span>
+                    <i class="fa-solid fa-microchip me-2"></i>
+                    Active Processes
+                </span>
+            </div>
+
+            <div class="metric-value text-cyan"
+                 id="metric-active-procs">
+                0
+            </div>
+
+            <div class="metric-sub">
+                Running Endpoint Tasks
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Suspicious Services -->
+    <div class="col-md">
+        <div class="cyber-card h-100">
+            <div class="cyber-card-header">
+                <span>
+                    <i class="fa-solid fa-gears me-2"></i>
+                    Suspicious Services
+                </span>
+            </div>
+
+            <div class="metric-value text-warning"
+                 id="metric-suspicious-svc">
+                0
+            </div>
+
+            <div class="metric-sub">
+                Flagged Windows Services
+            </div>
+        </div>
+    </div>
+
+
+    <!-- CPU / RAM -->
+    <div class="col-md">
+        <div class="cyber-card h-100">
+
+            <div class="cyber-card-header">
+                <span>
+                    <i class="fa-solid fa-gauge-high me-2"></i>
+                    CPU / RAM Load
+                </span>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+                    <div class="metric-value text-info"
+                         id="metric-cpu-percent">
+                        0%
+                    </div>
+
+                    <div class="metric-sub">
+                        CPU
+                    </div>
+                </div>
+
+                <div>
+                    <div class="metric-value text-primary"
+                         id="metric-ram-percent">
+                        0%
+                    </div>
+
+                    <div class="metric-sub">
+                        RAM
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Online Endpoints -->
+    <div class="col-md">
+        <div class="cyber-card h-100">
+
+            <div class="cyber-card-header">
+                <span>
+                    <i class="fa-solid fa-laptop me-2"></i>
+                    Online Endpoints
+                </span>
+
+                <span class="text-success">
+                    <i class="fa-solid fa-circle"></i>
+                </span>
+            </div>
+
+            <div class="metric-value text-success"
+                 id="metric-online-endpoints">
+                0
+            </div>
+
+            <div class="metric-sub">
+                Connected PCs / Laptops
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- REAL-TIME TELEMETRY -->
+<!-- ========================================================= -->
+
+<div class="row g-3 mb-4">
+
+    <!-- CPU / RAM Chart -->
+    <div class="col-md-8">
+
+        <div class="cyber-card h-100">
+
+            <div class="cyber-card-header">
+
+                <span>
+                    <i class="fa-solid fa-chart-area me-2"></i>
+                    Real-time Endpoint Resource Telemetry
+                </span>
+
+                <span class="mono-font text-muted small">
+                    Updated Live
+                </span>
+
+            </div>
+
+            <div style="height: 260px;">
+                <canvas id="cpuTrendChart"></canvas>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Alert Severity -->
+    <div class="col-md-4">
+
+        <div class="cyber-card h-100">
+
+            <div class="cyber-card-header">
+
+                <span>
+                    <i class="fa-solid fa-chart-pie me-2"></i>
+                    Alert Severity Distribution
+                </span>
+
+            </div>
+
+            <div style="height: 260px;">
+                <canvas id="severityChart"></canvas>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- ENDPOINT MONITORING -->
+<!-- ========================================================= -->
+
+<div class="cyber-card mb-4">
+
+    <div class="cyber-card-header">
+
+        <span>
+            <i class="fa-solid fa-network-wired me-2"></i>
+            Endpoint Monitoring
+        </span>
+
+        <span class="mono-font text-muted small">
+            Live Endpoint Status
+        </span>
+
+    </div>
+
+
+    <div class="table-responsive">
+
+        <table class="cyber-table">
+
+            <thead>
+
+                <tr>
+                    <th>Hostname</th>
+                    <th>Agent ID</th>
+                    <th>Username</th>
+                    <th>IP Address</th>
+                    <th>Status</th>
+                    <th>Last Seen</th>
+                </tr>
+
+            </thead>
+
+
+            <tbody id="endpoints-tbody">
+
+                <tr>
+
+                    <td colspan="6"
+                        class="text-center text-muted">
+
+                        <i class="fa-solid fa-spinner fa-spin me-2"></i>
+
+                        Loading endpoints...
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- RECENT SECURITY ALERTS -->
+<!-- ========================================================= -->
+
+<div class="cyber-card">
+
+    <div class="cyber-card-header">
+
+        <span>
+            <i class="fa-solid fa-shield-virus me-2"></i>
+            Recent Security Threat Detections
+        </span>
+
+        <a href="/alerts/"
+           class="cyber-btn-outline py-1 px-2 text-decoration-none">
+
+            View All Alerts
+
+        </a>
+
+    </div>
+
+
+    <div class="table-responsive">
+
+        <table class="cyber-table">
+
+            <thead>
+
+                <tr>
+                    <th>Severity</th>
+                    <th>Alert Title</th>
+                    <th>Hostname</th>
+                    <th>MITRE ATT&CK</th>
+                    <th>Timestamp</th>
+                </tr>
+
+            </thead>
+
+
+            <tbody id="recent-alerts-tbody">
+
+                <tr>
+
+                    <td colspan="5"
+                        class="text-center text-muted">
+
+                        Loading live security alerts...
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script src="/static/js/dashboard.js"></script>
+
+{% endblock %}

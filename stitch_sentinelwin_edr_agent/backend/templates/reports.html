@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Reports & Exports - Stitch Sentinel EDR{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold text-cyan mb-1"><i class="fa-solid fa-file-pdf me-2"></i> Security Reports & Data Export Center</h4>
+        <div class="text-muted small">Generate executive security summaries, alert export logs, and incident reporting packages</div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- PDF Executive Summary Card -->
+    <div class="col-md-4">
+        <div class="cyber-card text-center py-4">
+            <i class="fa-solid fa-file-pdf text-danger display-4 mb-3"></i>
+            <h5 class="fw-bold text-light">PDF Executive Report</h5>
+            <p class="small text-muted mb-4">Comprehensive executive audit report formatted with alert summaries, process metrics, and MITRE ATT&CK recommendations.</p>
+            <a href="/api/v1/reports/download/?format=pdf" class="cyber-btn-primary text-decoration-none d-inline-block w-100">
+                <i class="fa-solid fa-download me-2"></i> Download PDF Report
+            </a>
+        </div>
+    </div>
+
+    <!-- CSV Data Export Card -->
+    <div class="col-md-4">
+        <div class="cyber-card text-center py-4">
+            <i class="fa-solid fa-file-csv text-warning display-4 mb-3"></i>
+            <h5 class="fw-bold text-light">CSV Alerts Log Export</h5>
+            <p class="small text-muted mb-4">Export all active security alerts, hostname metadata, and raw threat telemetry in structured CSV format for SIEM ingestion.</p>
+            <a href="/api/v1/reports/download/?format=csv" class="cyber-btn-outline text-decoration-none d-inline-block w-100">
+                <i class="fa-solid fa-file-export me-2"></i> Export Alerts CSV
+            </a>
+        </div>
+    </div>
+
+    <!-- JSON Telemetry Card -->
+    <div class="col-md-4">
+        <div class="cyber-card text-center py-4">
+            <i class="fa-solid fa-code text-info display-4 mb-3"></i>
+            <h5 class="fw-bold text-light">JSON Full Audit Package</h5>
+            <p class="small text-muted mb-4">Machine-readable JSON security payload including endpoint hardware health, process trees, and alert histories.</p>
+            <a href="/api/v1/reports/download/?format=json" class="cyber-btn-outline text-decoration-none d-inline-block w-100">
+                <i class="fa-solid fa-code me-2"></i> Download JSON Audit
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

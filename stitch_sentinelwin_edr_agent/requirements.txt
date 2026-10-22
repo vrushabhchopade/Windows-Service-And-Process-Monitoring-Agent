@@ -1,0 +1,30 @@
+# Stitch Sentinel - Windows Service & Process Monitoring Agent Requirements
+
+# Django & Backend Framework
+Django>=5.0,<6.0
+djangorestframework>=3.14.0
+djangorestframework-simplejwt>=5.3.1
+django-cors-headers>=4.3.1
+
+# Database Drivers
+psycopg2-binary>=2.9.9
+
+# Monitoring & System Instrumentation
+psutil>=5.9.8
+pywin32>=306; sys_platform == 'win32'
+WMI>=1.5.1; sys_platform == 'win32'
+
+# Utilities & Networking
+requests>=2.31.0
+schedule>=1.2.1
+python-dotenv>=1.0.1
+urllib3>=2.2.0
+
+# Document & Report Generation
+reportlab>=4.1.0
+python-docx>=1.1.0
+
+# Packaging & Testing
+pyinstaller>=6.5.0
+pytest>=8.0.0
+pytest-django>=4.8.0

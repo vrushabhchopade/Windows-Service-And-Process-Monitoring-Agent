@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Agent Settings - Stitch Sentinel EDR{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold text-cyan mb-1"><i class="fa-solid fa-sliders me-2"></i> Agent & Detection System Settings</h4>
+        <div class="text-muted small">Configure polling frequencies, alert thresholds, webhook integrations, and data retention policies</div>
+    </div>
+</div>
+
+<div class="cyber-card mb-4">
+    <div class="cyber-card-header">
+        <span><i class="fa-solid fa-gear me-2"></i> Endpoint Monitoring & Detection Parameters</span>
+    </div>
+    <form id="settings-form">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="text-muted small fw-bold">PROCESS SCAN INTERVAL (SECONDS)</label>
+                <input type="number" name="monitoring_interval_seconds" id="monitoring_interval_seconds" class="cyber-input w-100" value="10" min="1" max="300">
+            </div>
+            <div class="col-md-6">
+                <label class="text-muted small fw-bold">DATA RETENTION PERIOD (DAYS)</label>
+                <input type="number" name="retention_days" id="retention_days" class="cyber-input w-100" value="30" min="1" max="365">
+            </div>
+            <div class="col-md-6">
+                <label class="text-muted small fw-bold">CPU ALERT THRESHOLD (%)</label>
+                <input type="number" step="0.1" name="cpu_threshold_percent" id="cpu_threshold_percent" class="cyber-input w-100" value="85.0">
+            </div>
+            <div class="col-md-6">
+                <label class="text-muted small fw-bold">RAM ALERT THRESHOLD (%)</label>
+                <input type="number" step="0.1" name="memory_threshold_percent" id="memory_threshold_percent" class="cyber-input w-100" value="90.0">
+            </div>
+            <div class="col-12 mt-4">
+                <h6 class="text-cyan fw-bold border-bottom border-secondary pb-2">NOTIFICATION WEBHOOK INTEGRATIONS</h6>
+            </div>
+            <div class="col-md-4">
+                <label class="text-muted small fw-bold">EMAIL NOTIFICATION WEBHOOK</label>
+                <input type="text" name="email_webhook" id="email_webhook" class="cyber-input w-100" placeholder="https://api.email.com/webhook">
+            </div>
+            <div class="col-md-4">
+                <label class="text-muted small fw-bold">TELEGRAM BOT WEBHOOK</label>
+                <input type="text" name="telegram_webhook" id="telegram_webhook" class="cyber-input w-100" placeholder="https://api.telegram.org/bot...">
+            </div>
+            <div class="col-md-4">
+                <label class="text-muted small fw-bold">SLACK INCOMING WEBHOOK</label>
+                <input type="text" name="slack_webhook" id="slack_webhook" class="cyber-input w-100" placeholder="https://hooks.slack.com/services/...">
+            </div>
+            <div class="col-12 text-end mt-4">
+                <button type="submit" class="cyber-btn-primary"><i class="fa-solid fa-floppy-disk me-2"></i> Save Configuration</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    fetch("/api/v1/settings/")
+        .then(res => res.json())
+        .then(data => {
+            if (data) {
+                document.getElementById("monitoring_interval_seconds").value = data.monitoring_interval_seconds || 10;
+                document.getElementById("retention_days").value = data.retention_days || 30;
+                document.getElementById("cpu_threshold_percent").value = data.cpu_threshold_percent || 85.0;
+                document.getElementById("memory_threshold_percent").value = data.memory_threshold_percent || 90.0;
+                document.getElementById("email_webhook").value = data.email_webhook || '';
+                document.getElementById("telegram_webhook").value = data.telegram_webhook || '';
+                document.getElementById("slack_webhook").value = data.slack_webhook || '';
+            }
+        });
+
+    document.getElementById("settings-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const json = Object.fromEntries(formData.entries());
+
+        fetch("/api/v1/settings/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie('csrftoken')
+            },
+            body: JSON.stringify(json)
+        })
+        .then(res => {
+            if (res.ok) alert("Settings saved successfully!");
+        });
+    });
+});
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

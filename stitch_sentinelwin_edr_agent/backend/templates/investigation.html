@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}SOC Investigation Workbench - Stitch Sentinel EDR{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold text-cyan mb-1"><i class="fa-solid fa-magnifying-glass me-2"></i> SOC Incident Investigation Workbench</h4>
+        <div class="text-muted small">Process parentage tree visualizer, incident timeline analysis, and related event correlates</div>
+    </div>
+    <div class="d-flex gap-2">
+        <span class="badge bg-warning text-dark align-self-center px-3 py-2 fw-bold">CASE #1: ACTIVE INCIDENT</span>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Left Column: Process Tree Visualizer -->
+    <div class="col-md-7">
+        <div class="cyber-card h-100">
+            <div class="cyber-card-header">
+                <span><i class="fa-solid fa-sitemap me-2"></i> Parent-Child Process Execution Hierarchy</span>
+                <span class="mono-font text-muted small">Host: WIN-EDR-AGENT-01</span>
+            </div>
+            <div id="process-tree-container" class="p-2" style="max-height: 520px; overflow-y: auto;">
+                <div class="text-muted p-3">Building process tree graph...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Alert & Event Timeline -->
+    <div class="col-md-5">
+        <div class="cyber-card mb-3">
+            <div class="cyber-card-header">
+                <span><i class="fa-solid fa-clock-rotate-left me-2"></i> Incident Alert Correlates</span>
+            </div>
+            <div id="investigation-alerts-timeline" style="max-height: 240px; overflow-y: auto;">
+                <div class="text-muted small p-2">Loading alert timeline...</div>
+            </div>
+        </div>
+
+        <div class="cyber-card">
+            <div class="cyber-card-header">
+                <span><i class="fa-solid fa-list me-2"></i> Correlated Event Logs</span>
+            </div>
+            <div id="investigation-events-list" style="max-height: 240px; overflow-y: auto;">
+                <div class="text-muted small p-2">Loading event logs...</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/investigation.js"></script>
+{% endblock %}

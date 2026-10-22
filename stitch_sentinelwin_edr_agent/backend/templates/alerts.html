@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Alerts Queue - Stitch Sentinel EDR{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold text-cyan mb-1"><i class="fa-solid fa-triangle-exclamation me-2"></i> SOC Threat Alerts Queue</h4>
+        <div class="text-muted small">Real-time alert triage, MITRE ATT&CK technique categorization, and resolution status management</div>
+    </div>
+    <div class="d-flex gap-2">
+        <select id="severity-filter" class="cyber-input" onchange="loadAlerts()">
+            <option value="">All Severities</option>
+            <option value="CRITICAL">Critical</option>
+            <option value="HIGH">High</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="LOW">Low</option>
+        </select>
+        <button class="cyber-btn-primary" onclick="loadAlerts()"><i class="fa-solid fa-rotate me-1"></i> Refresh</button>
+    </div>
+</div>
+
+<div class="cyber-card">
+    <div class="table-responsive">
+        <table class="cyber-table">
+            <thead>
+                <tr>
+                    <th>Severity</th>
+                    <th>Alert Description / Title</th>
+                    <th>Hostname</th>
+                    <th>User</th>
+                    <th>MITRE ATT&CK</th>
+                    <th>Status</th>
+                    <th>Timestamp</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="alerts-tbody">
+                <tr>
+                    <td colspan="8" class="text-center text-muted">Loading security alerts...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    loadAlerts();
+});
+
+function loadAlerts() {
+    const sevFilter = document.getElementById("severity-filter").value;
+    let url = "/api/v1/alerts/";
+    if (sevFilter) url += "?severity=" + sevFilter;
+
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            const alerts = data.results || data;
+            const tbody = document.getElementById("alerts-tbody");
+            if (!tbody) return;
+
+            tbody.innerHTML = "";
+            if (alerts.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted">No security alerts found</td></tr>';
+                return;
+            }
+
+            alerts.forEach(a => {
+                let badgeClass = 'badge-low';
+                if (a.severity === 'CRITICAL') badgeClass = 'badge-critical';
+                else if (a.severity === 'HIGH') badgeClass = 'badge-high';
+                else if (a.severity === 'MEDIUM') badgeClass = 'badge-medium';
+
+                let statusBadge = '<span class="badge bg-danger">New</span>';
+                if (a.status === 'In Progress') statusBadge = '<span class="badge bg-warning text-dark">In Progress</span>';
+                else if (a.status === 'Resolved') statusBadge = '<span class="badge bg-success">Resolved</span>';
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><span class="badge ${badgeClass}">${a.severity}</span></td>
+                    <td><strong>${escapeHtml(a.title)}</strong><div class="small text-muted">${escapeHtml(a.description)}</div></td>
+                    <td class="mono-font text-cyan">${escapeHtml(a.hostname)}</td>
+                    <td class="mono-font text-muted">${escapeHtml(a.username)}</td>
+                    <td><span class="mitre-tag">${escapeHtml(a.mitre_technique || 'N/A')}</span></td>
+                    <td>${statusBadge}</td>
+                    <td class="mono-font text-muted small">${new Date(a.timestamp).toLocaleTimeString()}</td>
+                    <td>
+                        <button class="cyber-btn-outline py-1 px-2" onclick="resolveAlert(${a.id})">Resolve</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        })
+        .catch(err => console.error("Error loading alerts:", err));
+}
+
+function resolveAlert(alertId) {
+    fetch(`/api/v1/alerts/${alertId}/`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ status: 'Resolved' })
+    })
+    .then(res => {
+        if (res.ok) loadAlerts();
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+</script>
+{% endblock %}

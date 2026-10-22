@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#0b1326;color:#dae2fd;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-secondary-fixed": "#001f26", "on-secondary-container": "#00424e", "surface-dim": "#0b1326", "surface-tint": "#adc6ff", "outline-variant": "#424754", "secondary": "#4cd7f6", "on-tertiary-fixed-variant": "#5516be", "on-tertiary-fixed": "#23005c", "surface-variant": "#2d3449", "on-secondary": "#003640", "inverse-surface": "#dae2fd", "on-error-container": "#ffdad6", "background": "#0b1326", "surface": "#0b1326", "primary-fixed-dim": "#adc6ff", "primary-fixed": "#d8e2ff", "on-error": "#690005", "on-primary": "#002e6a", "surface-container-highest": "#2d3449", "primary": "#adc6ff", "on-background": "#dae2fd", "primary-container": "#4d8eff", "error-container": "#93000a", "on-tertiary": "#3c0091", "secondary-container": "#03b5d3", "inverse-primary": "#005ac2", "surface-container": "#171f33", "inverse-on-surface": "#283044", "secondary-fixed": "#acedff", "secondary-fixed-dim": "#4cd7f6", "on-surface-variant": "#c2c6d6", "on-primary-container": "#00285d", "error": "#ffb4ab", "surface-bright": "#31394d", "tertiary-container": "#a078ff", "on-secondary-fixed-variant": "#004e5c", "tertiary-fixed": "#e9ddff", "surface-container-lowest": "#060e20", "on-tertiary-container": "#340080", "on-primary-fixed": "#001a42", "surface-container-low": "#131b2e", "on-primary-fixed-variant": "#004395", "tertiary": "#d0bcff", "surface-container-high": "#222a3d", "outline": "#8c909f", "on-surface": "#dae2fd", "tertiary-fixed-dim": "#d0bcff" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-md": "0.75rem", "space-sm": "0.5rem", "gutter": "1rem", "space-xs": "0.25rem", "space-lg": "1rem", "space-xl": "1.5rem", "margin": "1.5rem" }, "fontFamily": { "headline-sm": ["Inter"], "headline-xl-mobile": ["Inter"], "body-md": ["Inter"], "code-md": ["JetBrains Mono"], "body-lg": ["Inter"], "label-sm": ["JetBrains Mono"], "code-lg": ["JetBrains Mono"], "label-md": ["JetBrains Mono"], "code-sm": ["JetBrains Mono"], "headline-lg": ["Inter"], "headline-md": ["Inter"], "body-sm": ["Inter"], "headline-xl": ["Inter"] }, "fontSize": { "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }], "headline-xl-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "code-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "label-sm": ["10px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "600" }], "code-lg": ["14px", { "lineHeight": "20px", "fontWeight": "500" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }], "code-sm": ["11px", { "lineHeight": "14px", "fontWeight": "400" }], "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "headline-xl": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }] } } } }</script></head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen antialiased selection:bg-secondary-container selection:text-on-secondary-container"><header class="fixed top-0 inset-x-0 z-50 bg-surface/90 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.4)]"><div class="h-16 px-space-md flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><img alt="SentinelShield Logo" class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1WeMbUPYeg8Bvou7fl7eK2xdKxnU7Oov9g8eXU1D0gSKnS_H_9Nx7uvTb5IbLNRJNCBjmQnOSdsPegP4ve1uxQki3xF7SWXikAud50Od1OQZbJ5_SOedVdCPscnjPsjdMudKq3YAOKJyBfr3Jf6OCFJ3_YdbnunAtaPzQu3LZ7LQKpEl-Si7hejMWwyEm0XRsDBLnGVc_hGjUci9k6geb7P-0rbWdQrU1JPfg8-b5Ow_6Qs6u8c_ENtLJSK"/><div class="flex flex-col min-w-0"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface truncate">SentinelShield</span><span class="relative flex h-2 w-2 flex-shrink-0"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span></span></div><div class="flex items-center gap-space-xs"><span class="font-label-sm text-label-sm uppercase bg-surface-container-high text-secondary px-1.5 py-0.5 rounded">SOC LIVE</span><span class="font-label-sm text-label-sm uppercase bg-surface-variant text-primary px-1.5 py-0.5 rounded font-bold">DEMO MODE (Simulated Data)</span></div></div></div><div class="flex items-center gap-space-xs flex-shrink-0"><button aria-label="Alerts" class="relative w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-secondary active:scale-95 transition-all"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-2 right-2 flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full bg-error-container text-on-error font-code-sm text-code-sm font-bold shadow-[0_0_8px_rgba(239,68,68,0.5)]">4</span></button><div class="relative flex items-center pl-1"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-secondary/40 shadow-[0_0_10px_rgba(76,215,246,0.25)]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiB6ynWu3eaGWutR4hHmJMo56IUDHS5h3usWh2EbHANq-vXEZ8Yifbnm8FmKMz9rRR8u8Y4_1jkSdISpn0DU8qyWLED0IGU24q0Qmp_ZIBG0TDiuN9LVrB7PIQTnpoZh45v5HBvC5UtgerN6fv4rqeZaBzuEx4_uorosmtwnCYV5e6UvrdAcywF2Q_dTSqJ_rBqiGYzCSo59yhA3zea9GjDCkuajfYNhUEP8WP9mnYi6136dujqZvj7A"/></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full px-space-md py-space-sm gap-space-lg selection:bg-secondary selection:text-on-secondary">
+<!-- Telemetry Atmosphere Header with Micro-HUD -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container-low p-space-md shadow-md">
+<div class="absolute -right-12 -top-12 w-44 h-44 rounded-full bg-error-container/20 blur-3xl pointer-events-none"></div>
+<div class="absolute -left-12 -bottom-12 w-44 h-44 rounded-full bg-secondary-container/15 blur-3xl pointer-events-none"></div>
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[18px]">security_update_warning</span>
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant">Queue Telemetry</span>
+</div>
+<div class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-surface-container text-secondary">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-code-sm text-code-sm uppercase">Active Stream</span>
+</div>
+</div>
+<!-- Metrics Bento Strip -->
+<div class="grid grid-cols-2 gap-space-xs">
+<div class="bg-surface-container p-space-sm rounded-lg flex flex-col justify-between">
+<div class="flex items-baseline justify-between">
+<span class="font-headline-lg text-headline-lg font-bold text-on-surface">14</span>
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-error-container text-on-error-container font-semibold">4 CRIT</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Active Incidents</span>
+<div class="flex items-center gap-1 mt-2">
+<div class="h-1.5 flex-1 rounded bg-error shadow-[0_0_8px_rgba(255,180,171,0.5)]"></div>
+<div class="h-1.5 flex-1 rounded bg-secondary-container"></div>
+<div class="h-1.5 flex-1 rounded bg-tertiary-container"></div>
+<div class="h-1.5 flex-1 rounded bg-surface-variant"></div>
+</div>
+</div>
+<div class="bg-surface-container p-space-sm rounded-lg flex flex-col justify-between">
+<div class="flex items-baseline justify-between">
+<span class="font-headline-lg text-headline-lg font-bold text-secondary">4m 12s</span>
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-surface-bright text-secondary font-code-sm">94.2%</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">MTTA (Mean Ack Time)</span>
+<div class="flex items-center gap-1 mt-2 text-secondary">
+<span class="material-symbols-outlined text-[14px]">bolt</span>
+<span class="font-code-sm text-code-sm">-38s vs last 24h</span>
+</div>
+</div>
+</div>
+<!-- Severity Pill Row -->
+<div class="flex items-center justify-between gap-1.5 mt-space-sm pt-space-xs">
+<div class="flex items-center gap-1 px-2 py-1 rounded bg-surface-container-high flex-1 justify-center">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span class="font-label-sm text-label-sm text-on-surface">4 Crit</span>
+</div>
+<div class="flex items-center gap-1 px-2 py-1 rounded bg-surface-container-high flex-1 justify-center">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span class="font-label-sm text-label-sm text-on-surface">6 High</span>
+</div>
+<div class="flex items-center gap-1 px-2 py-1 rounded bg-surface-container-high flex-1 justify-center">
+<span class="w-2 h-2 rounded-full bg-tertiary-container"></span>
+<span class="font-label-sm text-label-sm text-on-surface">3 Med</span>
+</div>
+<div class="flex items-center gap-1 px-2 py-1 rounded bg-surface-container-high flex-1 justify-center">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+<span class="font-label-sm text-label-sm text-on-surface">1 Low</span>
+</div>
+</div>
+</div>
+<!-- Operational Filter Hub -->
+<div class="flex flex-col gap-space-xs">
+<!-- Horizontal Scrollable Tabs -->
+<div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5" id="statusTabs">
+<button class="status-tab flex-shrink-0 px-3 py-1.5 rounded-lg bg-secondary text-on-secondary font-label-md text-label-md transition-all shadow-sm" onclick="setActiveTab(this)">
+        All (14)
+      </button>
+<button class="status-tab flex-shrink-0 px-3 py-1.5 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all" onclick="setActiveTab(this)">
+        New (5)
+      </button>
+<button class="status-tab flex-shrink-0 px-3 py-1.5 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all" onclick="setActiveTab(this)">
+        Investigating (4)
+      </button>
+<button class="status-tab flex-shrink-0 px-3 py-1.5 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all" onclick="setActiveTab(this)">
+        Resolved (3)
+      </button>
+<button class="status-tab flex-shrink-0 px-3 py-1.5 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all" onclick="setActiveTab(this)">
+        False Positive (2)
+      </button>
+</div>
+<!-- Quick Dropdown Controls -->
+<div class="grid grid-cols-3 gap-1.5 pt-1">
+<button class="flex items-center justify-between px-2.5 py-2 rounded-lg bg-surface-container text-on-surface font-code-sm text-code-sm active:scale-95 transition-transform">
+<span class="truncate">Sev: All</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">expand_more</span>
+</button>
+<button class="flex items-center justify-between px-2.5 py-2 rounded-lg bg-surface-container text-on-surface font-code-sm text-code-sm active:scale-95 transition-transform">
+<span class="truncate">Analyst: Vance</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">tune</span>
+</button>
+<button class="flex items-center justify-between px-2.5 py-2 rounded-lg bg-surface-container text-on-surface font-code-sm text-code-sm active:scale-95 transition-transform">
+<span class="truncate">Past 24h</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">calendar_today</span>
+</button>
+</div>
+</div>
+<!-- Incident Feed Section -->
+<div class="flex flex-col gap-space-md">
+<!-- Alert Card 1: Critical Brute Force (Tactical Crimson Ambient) -->
+<div class="relative bg-surface-container-high rounded-xl p-space-md shadow-lg overflow-hidden transition-all duration-300" id="card-alt-8821">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-error shadow-[0_0_12px_rgba(255,180,171,0.8)]"></div>
+<!-- Top Meta Bar -->
+<div class="flex items-start justify-between gap-space-xs pl-1">
+<div class="flex flex-wrap items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-error-container text-on-error-container font-code-sm text-code-sm font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-error animate-ping"></span>
+            CRITICAL
+          </span>
+<span class="font-code-md text-code-md text-primary font-semibold">#ALT-8821</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-variant font-label-sm text-label-sm text-secondary">INVESTIGATING</span>
+</div>
+<span class="font-code-sm text-code-sm text-on-surface-variant">1m ago</span>
+</div>
+<!-- Title & Context -->
+<div class="mt-space-xs pl-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold leading-snug">
+          Coordinated Credential Stuffing &amp; Distributed Brute Force
+        </h2>
+<div class="mt-space-xs p-2 rounded bg-surface-container-lowest flex items-center justify-between gap-2">
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="material-symbols-outlined text-error text-[16px] flex-shrink-0">hub</span>
+<span class="font-code-sm text-code-sm text-on-surface truncate">42 Unique IPs • Target: <span class="text-secondary">/auth/login</span></span>
+</div>
+<span class="font-code-sm text-code-sm text-error bg-error-container/30 px-1.5 py-0.5 rounded flex-shrink-0">1.2k req/s</span>
+</div>
+</div>
+<!-- Assigned Sentinel & Note Snippet -->
+<div class="mt-space-xs pl-1 flex items-center justify-between text-on-surface-variant">
+<div class="flex items-center gap-1.5">
+<img class="w-5 h-5 rounded-full object-cover" data-alt="Close up tactical portrait avatar of senior cybersecurity incident handler E. Vance wearing comms headset in a dimly lit blue and cyan control room, high precision cinematic digital lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFSCZhnJ1e8Ls-BUSbgjDobOKHf4Z69bHlNiCwRllILd_sYgowfzT0Ps6KaFGb4iyl_bxMiooYwsY9STPVR6TOvvs8jI9HPto_vvNDVOHiMq7hS92G-zHxbqFnWE8FM81jKrS4Is1o43DgtxByEL9-xts7P4otkp35CETKfFo1ZOGOb4qZlQV2B4P5DdWTCAzXGS8ShS5_QWoP5vN6FaVOtZbvlxNsHPJww5MuVFxkgYAC64P6ki68dQ"/>
+<span class="font-body-sm text-body-sm text-on-surface">E. Vance</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">• Tier-2 SOC</span>
+</div>
+<button class="font-label-sm text-label-sm text-secondary hover:underline flex items-center gap-0.5" onclick="toggleDetails('details-8821')">
+<span>Notes &amp; Timeline</span>
+<span class="material-symbols-outlined text-[14px]">unfold_more</span>
+</button>
+</div>
+<!-- Expandable Incident Detail Console -->
+<div class="hidden mt-space-sm pl-1 pt-space-xs bg-surface-container-lowest/80 p-space-sm rounded-lg flex flex-col gap-space-xs" id="details-8821">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Triage Audit Stream</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">Live Sync</span>
+</div>
+<div class="flex flex-col gap-1.5">
+<div class="flex items-start gap-2">
+<span class="font-code-sm text-code-sm text-secondary flex-shrink-0">14:28:10</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant"><strong class="text-on-surface">Auto-WAF</strong> triggered challenge rule #RULE-404.</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="font-code-sm text-code-sm text-secondary flex-shrink-0">14:29:04</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant"><strong class="text-on-surface">E. Vance</strong> applied geofencing throttle on ASN 48329.</span>
+</div>
+</div>
+<!-- Inline Note Form -->
+<div class="mt-2 pt-2 flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Add Analyst Annotation</label>
+<div class="flex gap-1.5">
+<input class="flex-1 bg-surface-container text-on-surface font-body-sm text-body-sm px-2.5 py-1.5 rounded focus:outline-none focus:bg-surface-bright placeholder-on-surface-variant/50" id="noteInput-8821" placeholder="Type tactical update or IOC reference..." type="text"/>
+<button class="px-3 py-1.5 bg-secondary text-on-secondary rounded font-label-md text-label-md font-bold active:scale-95 transition-transform flex items-center gap-1" onclick="submitNote('8821')">
+<span class="material-symbols-outlined text-[16px]">send</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Triage Interactive Action Bar -->
+<div class="mt-space-sm pt-space-xs pl-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+<button class="flex-1 min-w-[100px] py-2 px-2.5 rounded bg-primary text-on-primary font-label-md text-label-md font-semibold text-center hover:opacity-95 active:scale-95 transition-transform flex items-center justify-center gap-1" onclick="triggerAction('Resolved', '#ALT-8821')">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+          Resolve
+        </button>
+<button class="flex-1 min-w-[110px] py-2 px-2.5 rounded bg-surface-container-highest text-secondary font-label-md text-label-md font-semibold text-center hover:bg-surface-bright active:scale-95 transition-transform flex items-center justify-center gap-1" onclick="triggerAction('Escalated to Tier 3', '#ALT-8821')">
+<span class="material-symbols-outlined text-[16px]">eject</span>
+          Tier 3
+        </button>
+<button class="flex-none py-2 px-3 rounded bg-surface-container text-on-surface-variant hover:text-error font-label-md text-label-md active:scale-95 transition-transform flex items-center justify-center" onclick="openFalsePositiveModal('#ALT-8821')">
+<span class="material-symbols-outlined text-[16px]">flag</span>
+</button>
+</div>
+</div>
+<!-- Alert Card 2: Critical Shell Upload -->
+<div class="relative bg-surface-container-high rounded-xl p-space-md shadow-md overflow-hidden" id="card-alt-8819">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-error"></div>
+<div class="flex items-start justify-between gap-space-xs pl-1">
+<div class="flex flex-wrap items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-error-container text-on-error-container font-code-sm text-code-sm font-bold">
+            CRITICAL
+          </span>
+<span class="font-code-md text-code-md text-primary font-semibold">#ALT-8819</span>
+<span class="px-1.5 py-0.5 rounded bg-error/20 font-label-sm text-label-sm text-error font-bold">NEW</span>
+</div>
+<span class="font-code-sm text-code-sm text-on-surface-variant">3m ago</span>
+</div>
+<div class="mt-space-xs pl-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold leading-snug">
+          Automated Shell Upload Exploit Detected
+        </h2>
+<div class="mt-space-xs p-2 rounded bg-surface-container-lowest flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm text-secondary">IP: 193.106.191.44</span>
+<span class="font-label-sm text-label-sm text-error bg-error-container/40 px-1 rounded">RCE Vector</span>
+</div>
+<span class="font-code-sm text-code-sm text-on-surface-variant truncate">
+            Target: <span class="text-on-surface">/wp-content/uploads/exploit.php</span>
+</span>
+</div>
+</div>
+<!-- Action Triage -->
+<div class="mt-space-sm pt-space-xs pl-1 flex items-center gap-1.5">
+<button class="flex-1 py-2 px-2.5 rounded bg-secondary text-on-secondary font-label-md text-label-md font-semibold text-center active:scale-95 transition-transform flex items-center justify-center gap-1 shadow-sm" onclick="triggerAction('Acknowledged', '#ALT-8819')">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+          Acknowledge
+        </button>
+<button class="flex-1 py-2 px-2.5 rounded bg-error-container text-on-error-container font-label-md text-label-md font-semibold text-center hover:bg-error active:scale-95 transition-transform flex items-center justify-center gap-1" onclick="triggerAction('Subnet 193.106.191.0/24 Blocked', '#ALT-8819')">
+<span class="material-symbols-outlined text-[16px]">gavel</span>
+          Block Subnet
+        </button>
+</div>
+</div>
+<!-- Alert Card 3: High XSS Probe -->
+<div class="relative bg-surface-container-high rounded-xl p-space-md shadow-md overflow-hidden" id="card-alt-8815">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-secondary-container"></div>
+<div class="flex items-start justify-between gap-space-xs pl-1">
+<div class="flex flex-wrap items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-secondary-container/20 text-secondary font-code-sm text-code-sm font-bold">
+            HIGH
+          </span>
+<span class="font-code-md text-code-md text-primary font-semibold">#ALT-8815</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-variant font-label-sm text-label-sm text-on-surface-variant">INVESTIGATING</span>
+</div>
+<span class="font-code-sm text-code-sm text-on-surface-variant">14m ago</span>
+</div>
+<div class="mt-space-xs pl-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold leading-snug">
+          Persistent Cross-Site Scripting Probe against Admin Console
+        </h2>
+<div class="mt-space-xs flex items-center gap-2">
+<span class="font-code-sm text-code-sm bg-surface-container-lowest px-2 py-0.5 rounded text-secondary">45.140.18.200</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant italic truncate">"Reviewing session cookies validation"</span>
+</div>
+</div>
+<div class="mt-space-sm pt-space-xs pl-1 flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[16px]">history_edu</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">Payload: &lt;script&gt;eval(...)</span>
+</div>
+<button class="py-1 px-3 rounded bg-surface-container text-secondary hover:bg-surface-bright font-label-md text-label-md active:scale-95 transition-transform flex items-center gap-1" onclick="triggerAction('Resolved', '#ALT-8815')">
+<span>Close</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Alert Card 4: Medium Scraping Bot (Resolved State Showcase) -->
+<div class="relative bg-surface-container-low rounded-xl p-space-md opacity-85 shadow-sm" id="card-alt-8810">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-outline"></div>
+<div class="flex items-start justify-between gap-space-xs pl-1">
+<div class="flex flex-wrap items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-variant text-on-surface-variant font-code-sm text-code-sm font-semibold">
+            MEDIUM
+          </span>
+<span class="font-code-md text-code-md text-on-surface-variant">#ALT-8810</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high font-label-sm text-label-sm text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">done_all</span>
+            RESOLVED
+          </span>
+</div>
+<span class="font-code-sm text-code-sm text-on-surface-variant">42m ago</span>
+</div>
+<div class="mt-space-xs pl-1">
+<h3 class="font-body-lg text-body-lg text-on-surface font-semibold leading-snug">
+          High-frequency scraping bot exceeding rate limit on <span class="font-code-sm text-code-sm text-secondary">/api/products</span>
+</h3>
+<p class="mt-1 font-body-sm text-body-sm text-on-surface-variant">
+          Mitigated via automatic 600s dynamic IP drop. Fingerprint added to known scraper registry.
+        </p>
+</div>
+</div>
+</div>
+<!-- Micro Visual Delight Card: SOC Operations Field Dispatch -->
+<div class="relative rounded-xl overflow-hidden bg-surface-container p-space-md flex items-center gap-space-md shadow-md">
+<div class="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="Holographic cyber defense radar showing incoming red and cyan vector nodes, technical HUD interface with clean futuristic lines and high-contrast dark cybersecurity UI styling." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIp92-OygcP5uAKtyZXnlMiCyqq0u6uxsx10umAlQGfjG1koliKVTdb_men7vIBfLRm7WgSHg-u1IZd9zpUMynuP5M0tvhgDRrllkeqkm7GHisv0ceUnq8IJMW6TEtKa0aiZrT0CoVP7JaLoxh2BLZpvAFHQTNuiE78b53uiHHkjIQHPInx_Wr0EHuBeTfjNrgQr7XC72JqylUCWVpCDSnaadJHVHZ12O-NCUMx1-WpvcIIEXn54EggA"/>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary">WAF Engine v4.8</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+</div>
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface truncate">Adaptive Heuristics Synced</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">False positive penalty auto-tunes rules globally.</span>
+</div>
+</div>
+<!-- Toast Notification Overlay Container (Dynamic) -->
+<div class="fixed top-20 inset-x-4 z-50 transform -translate-y-24 opacity-0 transition-all duration-300 pointer-events-none flex items-center justify-between p-space-md rounded-lg bg-surface-container-highest shadow-xl" id="toastNotification">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" id="toastIcon">check_circle</span>
+<span class="font-body-sm text-body-sm text-on-surface font-semibold" id="toastMessage">Alert status updated successfully.</span>
+</div>
+<span class="font-code-sm text-code-sm text-on-surface-variant">SENTINEL</span>
+</div>
+<!-- False Positive Confirmation Dialog Modal -->
+<div class="fixed inset-0 z-50 bg-background/80 backdrop-blur-md hidden flex items-end sm:items-center justify-center p-space-md" id="fpModalBackdrop">
+<div class="w-full max-w-sm rounded-xl bg-surface-container-high p-space-lg shadow-2xl flex flex-col gap-space-md transform transition-all">
+<div class="flex items-center gap-space-sm text-error">
+<div class="w-9 h-9 rounded-full bg-error-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-on-error-container text-[20px]">warning</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">False Positive Triage</span>
+<span class="font-code-sm text-code-sm text-error" id="modalAlertTarget">#ALT-8821</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+        Confirm Mark as False Positive: This will update rule weighting in the WAF engine and decrement anomaly scoring for this vector signature.
+      </p>
+<div class="flex flex-col gap-1.5 bg-surface-container-lowest p-2 rounded">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase">Exemption Scope</label>
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm text-secondary">Target Endpoint Only</span>
+<span class="material-symbols-outlined text-secondary text-[16px]">check</span>
+</div>
+</div>
+<div class="flex items-center gap-2 pt-1">
+<button class="flex-1 py-2 px-3 rounded bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-bright active:scale-95 transition-transform" onclick="closeFalsePositiveModal()">
+          Cancel
+        </button>
+<button class="flex-1 py-2 px-3 rounded bg-secondary text-on-secondary font-label-md text-label-md font-bold hover:opacity-90 active:scale-95 transition-transform flex items-center justify-center gap-1" onclick="confirmFalsePositive()">
+<span class="material-symbols-outlined text-[16px]">auto_fix_high</span>
+          Confirm Rule
+        </button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  let targetAlertId = null;
+
+  function setActiveTab(btn) {
+    document.querySelectorAll('.status-tab').forEach(t => {
+      t.classList.remove('bg-secondary', 'text-on-secondary');
+      t.classList.add('bg-surface-container', 'text-on-surface-variant');
+    });
+    btn.classList.remove('bg-surface-container', 'text-on-surface-variant');
+    btn.classList.add('bg-secondary', 'text-on-secondary');
+  }
+
+  function toggleDetails(elementId) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    el.classList.toggle('hidden');
+  }
+
+  function showToast(message, icon = 'check_circle') {
+    const toast = document.getElementById('toastNotification');
+    const msg = document.getElementById('toastMessage');
+    const icn = document.getElementById('toastIcon');
+    if (!toast) return;
+
+    msg.innerText = message;
+    icn.innerText = icon;
+    toast.classList.remove('-translate-y-24', 'opacity-0');
+    toast.classList.add('translate-y-0', 'opacity-100');
+
+    setTimeout(() => {
+      toast.classList.remove('translate-y-0', 'opacity-100');
+      toast.classList.add('-translate-y-24', 'opacity-0');
+    }, 2800);
+  }
+
+  function triggerAction(actionName, alertId) {
+    showToast(`${alertId} ${actionName}`, 'task_alt');
+  }
+
+  function submitNote(alertNum) {
+    const input = document.getElementById('noteInput-' + alertNum);
+    if (!input || !input.value.trim()) return;
+    showToast(`Note logged for #ALT-${alertNum}`, 'rate_review');
+    input.value = '';
+  }
+
+  function openFalsePositiveModal(alertId) {
+    targetAlertId = alertId;
+    document.getElementById('modalAlertTarget').innerText = alertId;
+    document.getElementById('fpModalBackdrop').classList.remove('hidden');
+  }
+
+  function closeFalsePositiveModal() {
+    document.getElementById('fpModalBackdrop').classList.add('hidden');
+  }
+
+  function confirmFalsePositive() {
+    closeFalsePositiveModal();
+    showToast(`WAF engine updated: ${targetAlertId} marked FP`, 'rule');
+  }
+</script></main><div class="hidden fixed inset-0 z-40 bg-background/80 backdrop-blur-md transition-opacity" id="soc-drawer-backdrop" onclick="document.getElementById('soc-drawer').classList.add('translate-y-full'); this.classList.add('hidden');"></div><div class="fixed bottom-20 inset-x-0 z-50 transform translate-y-full transition-transform duration-300 ease-in-out bg-surface-container-high rounded-t-xl shadow-[0_-8px_30px_rgba(0,0,0,0.7)] max-h-[70vh] flex flex-col" id="soc-drawer"><div class="flex items-center justify-between px-space-lg py-space-md bg-surface-container-highest rounded-t-xl"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-secondary text-[20px]">hub</span><span class="font-headline-sm text-headline-sm text-on-surface">SOC Operations Matrix</span></div><button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-on-surface" onclick="document.getElementById('soc-drawer').classList.add('translate-y-full'); document.getElementById('soc-drawer-backdrop').classList.add('hidden');"><span class="material-symbols-outlined text-[20px]">close</span></button></div><div class="grid grid-cols-2 gap-space-sm p-space-md overflow-y-auto"><a class="flex items-center gap-space-sm p-space-sm rounded bg-surface-container hover:bg-surface-bright text-on-surface" data-path="overview-dashboard" href="#"><span class="material-symbols-outlined text-secondary text-[18px]">dashboard</span><span class="font-body-sm text-body-sm">Overview</span></a><a class="flex items-center gap-space-sm p-space-sm rounded bg-surface-container hover:bg-surface-bright text-on-surface" data-path="live-traffic" href="#"><span class="material-symbols-outlined text-secondary text-[18px]">stream</span><span class="font-body-sm text-body-sm">Live Traffic</span></a><a class="flex items-center gap-space-sm p-space-sm rounded bg-surface-container hover:bg-surface-bright text-on-surface" data-path="attack-detection" href="#"><span class="material-symbols-outlined text-error text-[18px]">radar</span><span class="font-body-sm text-body-sm">Attack Detect</span></a><a class="flex items-center gap-space-sm p-space-sm rounded bg-surface-container hover:bg-surface-bright text-on-surface" data-path="security-alerts" href="#"><span class="material-symbols-outlined text-error text-[18px]">crisis_alert</span><span class="font-body-sm text-body-sm">Security Alerts</span></a><a class="flex items-center gap-space-sm p-space-sm rounded bg-surface-container hover:bg-surface-bright text-on-surface" data-path="security-logs" href="#"><span class="material-symbols-outlined text-primary text-[18px]">terminal</span><span class="font-body-sm text-body-sm">Security Logs</span></a><a class="flex items-center gap-space-sm p-space-sm rounded bg-surface-container hover:bg-surface-bright text-on-surface" data-path="ip-reputation" href="#"><span class="material-symbols-outlined text-secondary text-[18px]">travel_explore</span><span class="font-body-sm text-body-sm">IP Reputation</span></a><a class="flex items-center gap-space-sm p-space-sm rounded bg-surface-container hover:bg-surface-bright text-on-surface" data-path="rate-limiting" href="#"><span class="material-symbols-outlined text-tertiary text-[18px]">speed</span><span class="font-body-sm text-body-sm">Rate Limiting</span></a><a class="flex items-center gap-space-sm p-space-sm rounded bg-surface-container hover:bg-surface-bright text-on-surface" data-path="waf-rules" href="#"><span class="material-symbols-outlined text-secondary text-[18px]">security</span><span class="font-body-sm text-body-sm">WAF Rules</span></a><a class="flex items-center gap-space-sm p-space-sm rounded bg-surface-container hover:bg-surface-bright text-on-surface" data-path="request-inspector" href="#"><span class="material-symbols-outlined text-secondary text-[18px]">query_stats</span><span class="font-body-sm text-body-sm">Inspector</span></a><a class="flex items-center gap-space-sm p-space-sm rounded bg-surface-container hover:bg-surface-bright text-on-surface" data-path="reports" href="#"><span class="material-symbols-outlined text-primary text-[18px]">assessment</span><span class="font-body-sm text-body-sm">Reports</span></a><a class="flex items-center gap-space-sm p-space-sm rounded bg-surface-container hover:bg-surface-bright text-on-surface" data-path="system-health" href="#"><span class="material-symbols-outlined text-secondary text-[18px]">vital_signs</span><span class="font-body-sm text-body-sm">System Health</span></a></div></div><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface-container-low/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.5)]" data-active-classes="text-secondary bg-surface-container-high/80 font-semibold"><div class="flex justify-around items-center h-16 px-space-xs"><a class="flex flex-col items-center justify-center min-w-[56px] h-12 rounded px-1 text-on-surface-variant hover:text-on-surface transition-all" data-path="overview-dashboard" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="font-label-sm text-label-sm tracking-normal">SOC</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 rounded px-1 text-on-surface-variant hover:text-on-surface transition-all" data-path="live-traffic" href="#"><span class="material-symbols-outlined text-[20px]">sensors</span><span class="font-label-sm text-label-sm tracking-normal">Traffic</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 rounded px-1 text-on-surface-variant hover:text-on-surface transition-all" data-path="attack-detection" href="#"><span class="material-symbols-outlined text-[20px]">shield_with_heart</span><span class="font-label-sm text-label-sm tracking-normal">Attacks</span></a><a aria-current="page" class="flex flex-col items-center justify-center min-w-[56px] h-12 rounded px-1 transition-all text-secondary bg-surface-container-high/80 font-semibold" data-path="security-alerts" href="#"><span class="material-symbols-outlined text-[20px]">warning</span><span class="font-label-sm text-label-sm tracking-normal">Alerts</span></a><button class="flex flex-col items-center justify-center min-w-[56px] h-12 rounded px-1 text-on-surface-variant hover:text-secondary transition-all" onclick="const d = document.getElementById('soc-drawer'); const b = document.getElementById('soc-drawer-backdrop'); if(d.classList.contains('translate-y-full')){ d.classList.remove('translate-y-full'); b.classList.remove('hidden'); } else { d.classList.add('translate-y-full'); b.classList.add('hidden'); }"><span class="material-symbols-outlined text-[20px]">apps</span><span class="font-label-sm text-label-sm tracking-normal">Modules</span></button></div></nav></body></html>

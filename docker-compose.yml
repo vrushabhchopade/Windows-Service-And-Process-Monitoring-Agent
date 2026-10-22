@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: stitch_sentinel_db
+    environment:
+      POSTGRES_DB: sentinel_edr
+      POSTGRES_USER: sentinel
+      POSTGRES_PASSWORD: sentinel_password123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    container_name: stitch_sentinel_backend
+    command: >
+      sh -c "python backend/manage.py migrate &&
+             python backend/manage.py seed_data &&
+             python backend/manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=django-insecure-stitch-sentinel-key-change-in-prod
+      - DATABASE_URL=postgres://sentinel:sentinel_password123@db:5432/sentinel_edr
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:

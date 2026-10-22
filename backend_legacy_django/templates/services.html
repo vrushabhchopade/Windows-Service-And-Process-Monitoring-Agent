@@ -1,0 +1,811 @@
+{% extends "base.html" %}
+
+{% block title %}
+Windows Service Audit - Stitch Sentinel EDR
+{% endblock %}
+
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h4 class="fw-bold text-cyan mb-1">
+            <i class="fa-solid fa-gears me-2"></i>
+            Startup & Windows Service Auditor
+        </h4>
+
+        <div class="text-muted small">
+            Continuous auditing of installed Windows services,
+            persistence paths, startup types, and security service statuses
+        </div>
+
+        <div class="mt-3 d-flex gap-3 align-items-center">
+
+            <span
+                id="live-status"
+                class="text-success fw-bold small">
+
+                <i class="fa-solid fa-circle"></i>
+                LIVE
+
+            </span>
+
+            <span
+                id="live-tick"
+                class="text-cyan fw-bold small">
+
+                TICK: 0
+
+            </span>
+
+            <span
+                id="service-count"
+                class="text-muted small">
+
+                Services: 0
+
+            </span>
+
+            <span
+                id="last-update"
+                class="text-muted small">
+
+                Last Update: --
+
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="d-flex gap-2">
+
+        <button
+            class="cyber-btn-outline"
+            onclick="filterServices('all')">
+
+            All Services
+
+        </button>
+
+
+        <button
+            class="cyber-btn-outline text-warning border-warning"
+            onclick="filterServices('suspicious')">
+
+            Suspicious Services
+
+        </button>
+
+
+        <button
+            class="cyber-btn-primary"
+            onclick="loadServices()">
+
+            <i class="fa-solid fa-rotate me-1"></i>
+            Refresh
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<div class="cyber-card">
+
+    <div class="table-responsive">
+
+        <table class="cyber-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Service Name
+                    </th>
+
+                    <th>
+                        Display Name
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Startup Type
+                    </th>
+
+                    <th>
+                        Service Account
+                    </th>
+
+                    <th>
+                        Binary Path
+                    </th>
+
+                    <th>
+                        Audit Flags
+                    </th>
+
+                    <th>
+                        Last Seen
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="services-tbody">
+
+                <tr>
+
+                    <td
+                        colspan="8"
+                        class="text-center text-muted">
+
+                        <i class="fa-solid fa-spinner fa-spin me-2"></i>
+
+                        Loading Windows services...
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<style>
+
+#live-status {
+    transition: all 0.2s ease;
+}
+
+.live-pulse {
+
+    transform: scale(1.08);
+
+    opacity: 0.55;
+
+}
+
+.live-row {
+
+    animation: rowPulse 0.35s ease;
+
+}
+
+@keyframes rowPulse {
+
+    0% {
+
+        opacity: 0.35;
+
+    }
+
+    50% {
+
+        opacity: 1;
+
+    }
+
+    100% {
+
+        opacity: 1;
+
+    }
+
+}
+
+#live-tick {
+
+    transition: all 0.2s ease;
+
+}
+
+.tick-change {
+
+    transform: scale(1.15);
+
+}
+
+</style>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+let currentFilter = "all";
+
+let liveTick = 0;
+
+let previousTelemetry = null;
+
+
+/*
+===========================================================
+START LIVE MONITORING
+===========================================================
+*/
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        loadServices();
+
+        /*
+        EXACTLY EVERY 1 SECOND
+        */
+
+        setInterval(
+            loadServices,
+            1000
+        );
+
+    }
+);
+
+
+/*
+===========================================================
+LOAD LIVE SERVICES
+===========================================================
+*/
+
+function loadServices() {
+
+    let url =
+        "/api/v1/services/live/";
+
+    if (
+        currentFilter ===
+        "suspicious"
+    ) {
+
+        url +=
+            "?suspicious=true";
+
+    }
+
+
+    fetch(
+        url + (
+            url.includes("?")
+            ? "&"
+            : "?"
+        ) + "_=" + Date.now(),
+        {
+            method: "GET",
+            cache: "no-store",
+            headers: {
+                "Cache-Control":
+                    "no-cache",
+                "Pragma":
+                    "no-cache"
+            }
+        }
+    )
+
+    .then(
+        function (response) {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "HTTP " +
+                    response.status
+                );
+
+            }
+
+            return response.json();
+
+        }
+    )
+
+    .then(
+        function (data) {
+
+            updateLiveIndicator(
+                true
+            );
+
+            renderServices(
+                data.services || []
+            );
+
+            updateLiveInfo(
+                data
+            );
+
+        }
+    )
+
+    .catch(
+        function (error) {
+
+            console.error(
+                "LIVE SERVICE ERROR:",
+                error
+            );
+
+            updateLiveIndicator(
+                false
+            );
+
+        }
+    );
+
+}
+
+
+/*
+===========================================================
+LIVE INFORMATION
+===========================================================
+*/
+
+function updateLiveInfo(data) {
+
+    liveTick++;
+
+    const tick =
+        document.getElementById(
+            "live-tick"
+        );
+
+    if (tick) {
+
+        tick.innerText =
+            "TICK: " +
+            liveTick;
+
+        tick.classList.remove(
+            "tick-change"
+        );
+
+        void tick.offsetWidth;
+
+        tick.classList.add(
+            "tick-change"
+        );
+
+    }
+
+
+    const count =
+        document.getElementById(
+            "service-count"
+        );
+
+    if (count) {
+
+        count.innerText =
+            "Services: " +
+            (data.count || 0);
+
+    }
+
+
+    const update =
+        document.getElementById(
+            "last-update"
+        );
+
+    if (update) {
+
+        const now =
+            new Date();
+
+        update.innerText =
+            "Last Update: " +
+            now.toLocaleTimeString();
+
+    }
+
+}
+
+
+/*
+===========================================================
+RENDER SERVICES
+===========================================================
+*/
+
+function renderServices(
+    services
+) {
+
+    const tbody =
+        document.getElementById(
+            "services-tbody"
+        );
+
+    if (!tbody) {
+
+        return;
+
+    }
+
+
+    if (
+        services.length === 0
+    ) {
+
+        tbody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="8"
+                    class="text-center text-muted">
+
+                    No Windows services found
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    tbody.innerHTML = "";
+
+
+    services.forEach(
+        function (s) {
+
+            const tr =
+                document.createElement(
+                    "tr"
+                );
+
+
+            const isRunning =
+                s.status ===
+                "Running";
+
+
+            let statusBadge;
+
+
+            if (isRunning) {
+
+                statusBadge = `
+
+                    <span
+                        class="badge badge-low">
+
+                        <i
+                            class="fa-solid fa-circle me-1">
+                        </i>
+
+                        Running
+
+                    </span>
+
+                `;
+
+            } else {
+
+                statusBadge = `
+
+                    <span
+                        class="badge bg-secondary">
+
+                        <i
+                            class="fa-solid fa-circle me-1">
+                        </i>
+
+                        ${escapeHtml(
+                            s.status ||
+                            "Unknown"
+                        )}
+
+                    </span>
+
+                `;
+
+            }
+
+
+            let suspiciousBadge;
+
+
+            if (
+                s.is_suspicious
+            ) {
+
+                suspiciousBadge = `
+
+                    <span
+                        class="badge badge-critical">
+
+                        SUSPICIOUS PATH
+
+                    </span>
+
+                `;
+
+            } else {
+
+                suspiciousBadge = `
+
+                    <span
+                        class="badge badge-low">
+
+                        Verified
+
+                    </span>
+
+                `;
+
+            }
+
+
+            let lastSeen = "--";
+
+
+            if (
+                s.timestamp
+            ) {
+
+                const date =
+                    new Date(
+                        s.timestamp
+                    );
+
+                lastSeen =
+                    date.toLocaleTimeString();
+
+            }
+
+
+            tr.innerHTML = `
+
+                <td
+                    class="mono-font fw-bold text-cyan">
+
+                    ${escapeHtml(
+                        s.service_name
+                    )}
+
+                </td>
+
+
+                <td>
+
+                    ${escapeHtml(
+                        s.display_name
+                    )}
+
+                </td>
+
+
+                <td>
+
+                    ${statusBadge}
+
+                </td>
+
+
+                <td
+                    class="mono-font">
+
+                    ${escapeHtml(
+                        s.startup_type
+                    )}
+
+                </td>
+
+
+                <td
+                    class="mono-font text-muted">
+
+                    ${escapeHtml(
+                        s.service_account
+                    )}
+
+                </td>
+
+
+                <td
+                    class="mono-font text-truncate small"
+                    style="max-width:300px;"
+                    title="${escapeHtml(
+                        s.binary_path
+                    )}">
+
+                    ${escapeHtml(
+                        s.binary_path
+                    )}
+
+                </td>
+
+
+                <td>
+
+                    ${suspiciousBadge}
+
+                </td>
+
+
+                <td
+                    class="mono-font text-cyan">
+
+                    ${lastSeen}
+
+                </td>
+
+            `;
+
+
+            tr.classList.add(
+                "live-row"
+            );
+
+
+            tbody.appendChild(
+                tr
+            );
+
+        }
+    );
+
+}
+
+
+/*
+===========================================================
+FILTER
+===========================================================
+*/
+
+function filterServices(
+    type
+) {
+
+    if (
+        type ===
+        "suspicious"
+    ) {
+
+        currentFilter =
+            "suspicious";
+
+    } else {
+
+        currentFilter =
+            "all";
+
+    }
+
+    loadServices();
+
+}
+
+
+/*
+===========================================================
+LIVE STATUS
+===========================================================
+*/
+
+function updateLiveIndicator(
+    online
+) {
+
+    const element =
+        document.getElementById(
+            "live-status"
+        );
+
+    if (!element) {
+
+        return;
+
+    }
+
+
+    if (online) {
+
+        element.className =
+            "text-success fw-bold small live-pulse";
+
+        element.innerHTML = `
+
+            <i
+                class="fa-solid fa-circle">
+            </i>
+
+            LIVE · 1s
+
+        `;
+
+    } else {
+
+        element.className =
+            "text-danger fw-bold small";
+
+        element.innerHTML = `
+
+            <i
+                class="fa-solid fa-circle">
+            </i>
+
+            BACKEND OFFLINE
+
+        `;
+
+    }
+
+}
+
+
+/*
+===========================================================
+ESCAPE HTML
+===========================================================
+*/
+
+function escapeHtml(
+    text
+) {
+
+    if (
+        text === null ||
+        text === undefined
+    ) {
+
+        return "";
+
+    }
+
+
+    return String(text)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+</script>
+
+{% endblock %}

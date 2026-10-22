@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Running Processes - Stitch Sentinel EDR{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold text-cyan mb-1"><i class="fa-solid fa-microchip me-2"></i> Endpoint Process Explorer</h4>
+        <div class="text-muted small">Real-time audit of running Windows processes, parent-child relationships, and binary paths</div>
+    </div>
+    <div class="d-flex gap-2">
+        <input type="text" id="process-search-input" class="cyber-input" placeholder="Search PID, name, cmdline..." style="width: 280px;">
+        <button class="cyber-btn-primary" onclick="loadProcesses()"><i class="fa-solid fa-rotate me-1"></i> Refresh</button>
+    </div>
+</div>
+
+<div class="cyber-card">
+    <div class="table-responsive">
+        <table class="cyber-table">
+            <thead>
+                <tr>
+                    <th>PID</th>
+                    <th>PPID</th>
+                    <th>Process Name</th>
+                    <th>Parent Process</th>
+                    <th>User Context</th>
+                    <th>Executable Binary Path</th>
+                    <th>Path Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="processes-tbody">
+                <tr>
+                    <td colspan="8" class="text-center text-muted">Loading running processes...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Process Detail Modal -->
+<div class="modal fade" id="processDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-container border border-cyan text-light">
+            <div class="modal-header border-bottom border-secondary">
+                <h5 class="modal-title text-cyan"><i class="fa-solid fa-circle-info me-2"></i> Process Details & Execution Hierarchy</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="text-muted small fw-bold">PROCESS NAME</label>
+                        <div id="modal-name" class="fs-5 fw-bold text-light"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="text-muted small fw-bold">PID</label>
+                        <div id="modal-pid" class="fs-5 mono-font text-cyan"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="text-muted small fw-bold">PARENT PID</label>
+                        <div id="modal-parent" class="fs-5 mono-font text-cyan"></div>
+                    </div>
+                    <div class="col-12">
+                        <label class="text-muted small fw-bold">EXECUTABLE PATH</label>
+                        <div id="modal-path" class="p-2 bg-container-high mono-font small text-warning border border-secondary text-break"></div>
+                    </div>
+                    <div class="col-12">
+                        <label class="text-muted small fw-bold">COMMAND LINE INVOCATION</label>
+                        <div id="modal-cmdline" class="p-2 bg-container-high mono-font small text-info border border-secondary text-break"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-top border-secondary">
+                <button type="button" class="cyber-btn-outline" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/processes.js"></script>
+{% endblock %}

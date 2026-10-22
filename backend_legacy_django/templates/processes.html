@@ -1,0 +1,1133 @@
+<!-- PROCESS PAGE TEST -->
+
+{% extends "base.html" %}
+
+{% block title %}Running Processes - Stitch Sentinel EDR{% endblock %}
+
+{% block content %}
+
+<style>
+    /* =========================================================
+       PROCESS LIVE STATUS
+       ========================================================= */
+
+    .process-live-bar {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+    }
+
+    .live-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 12px;
+        border: 1px solid rgba(0, 255, 170, 0.35);
+        border-radius: 6px;
+        background: rgba(0, 255, 170, 0.08);
+        color: #00ffaa;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .live-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #00ffaa;
+        box-shadow: 0 0 8px #00ffaa;
+    }
+
+    .live-status.offline {
+        color: #ff5c5c;
+        border-color: rgba(255, 92, 92, 0.35);
+        background: rgba(255, 92, 92, 0.08);
+    }
+
+    .live-status.offline .live-dot {
+        background: #ff5c5c;
+        box-shadow: 0 0 8px #ff5c5c;
+    }
+
+    .process-stat {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 12px;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        font-size: 12px;
+    }
+
+    .process-stat-label {
+        color: #8c9aaa;
+    }
+
+    .process-stat-value {
+        color: #00d9ff;
+        font-weight: 700;
+    }
+
+    /* =========================================================
+       PARENT PROCESS
+       ========================================================= */
+
+    .parent-process-cell {
+        min-width: 180px;
+    }
+
+    .parent-process-name {
+        color: #f1f5f9 !important;
+        font-weight: 700;
+        display: block;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .parent-process-pid {
+        color: #00d9ff !important;
+        font-size: 11px;
+        margin-top: 3px;
+        display: block;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .process-name {
+        color: #ffffff !important;
+        font-weight: 700;
+    }
+
+    .process-pid {
+        color: #00d9ff !important;
+        font-family: monospace;
+    }
+
+    .process-path {
+        color: #dbe7f3 !important;
+        font-size: 12px;
+        max-width: 280px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .last-updated {
+        color: #8c9aaa;
+        font-size: 11px;
+    }
+
+    .refresh-active {
+        animation: refreshPulse 0.35s ease;
+    }
+
+    @keyframes refreshPulse {
+        0% {
+            opacity: 0.55;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .process-loading {
+        padding: 35px !important;
+        color: #8c9aaa !important;
+        text-align: center;
+    }
+
+    .process-error {
+        padding: 30px !important;
+        color: #ff6b6b !important;
+        text-align: center;
+    }
+</style>
+
+
+<!-- =========================================================
+     HEADER
+     ========================================================= -->
+
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
+
+    <div>
+        <h4 class="fw-bold text-cyan mb-1">
+            <i class="fa-solid fa-microchip me-2"></i>
+            Endpoint Process Explorer
+        </h4>
+
+        <div class="text-muted small">
+            Real-time audit of running Windows processes, parent-child relationships, and binary paths
+        </div>
+    </div>
+
+    <div class="d-flex gap-2 flex-wrap">
+
+        <input
+            type="text"
+            id="process-search-input"
+            class="cyber-input"
+            placeholder="Search PID, name, cmdline..."
+            style="width: 280px;"
+        >
+
+        <button
+            type="button"
+            id="process-refresh-btn"
+            class="cyber-btn-primary"
+        >
+            <i class="fa-solid fa-rotate me-1"></i>
+            Refresh
+        </button>
+
+    </div>
+</div>
+
+
+<!-- =========================================================
+     LIVE STATUS BAR
+     ========================================================= -->
+
+<div class="process-live-bar">
+
+    <div id="process-live-status" class="live-status">
+        <span class="live-dot"></span>
+        LIVE
+    </div>
+
+    <div class="process-stat">
+        <span class="process-stat-label">
+            Processes
+        </span>
+
+        <span
+            id="process-count"
+            class="process-stat-value"
+        >
+            0
+        </span>
+    </div>
+
+    <div class="process-stat">
+        <span class="process-stat-label">
+            Last Updated
+        </span>
+
+        <span
+            id="process-last-updated"
+            class="last-updated"
+        >
+            Waiting...
+        </span>
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     PROCESS TABLE
+     ========================================================= -->
+
+<div class="cyber-card">
+
+    <div class="table-responsive">
+
+        <table class="cyber-table">
+
+            <thead>
+                <tr>
+                    <th>PID</th>
+                    <th>PPID</th>
+                    <th>Process Name</th>
+                    <th>Parent Process</th>
+                    <th>User Context</th>
+                    <th>Executable Binary Path</th>
+                    <th>Path Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody id="processes-tbody">
+
+                <tr>
+                    <td
+                        colspan="8"
+                        class="process-loading"
+                    >
+                        <i class="fa-solid fa-spinner fa-spin me-2"></i>
+                        Loading live processes...
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     PROCESS DETAIL MODAL
+     ========================================================= -->
+
+<div
+    class="modal fade"
+    id="processDetailModal"
+    tabindex="-1"
+>
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content bg-container border border-cyan text-light">
+
+            <div class="modal-header border-bottom border-secondary">
+
+                <h5 class="modal-title text-cyan">
+
+                    <i class="fa-solid fa-circle-info me-2"></i>
+
+                    Process Details & Execution Hierarchy
+
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                ></button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <label class="text-muted small fw-bold">
+                            PROCESS NAME
+                        </label>
+
+                        <div
+                            id="modal-name"
+                            class="fs-5 fw-bold text-light"
+                        ></div>
+
+                    </div>
+
+
+                    <div class="col-md-3">
+
+                        <label class="text-muted small fw-bold">
+                            PID
+                        </label>
+
+                        <div
+                            id="modal-pid"
+                            class="fs-5 mono-font text-cyan"
+                        ></div>
+
+                    </div>
+
+
+                    <div class="col-md-3">
+
+                        <label class="text-muted small fw-bold">
+                            PARENT PID
+                        </label>
+
+                        <div
+                            id="modal-parent"
+                            class="fs-5 mono-font text-cyan"
+                        ></div>
+
+                    </div>
+
+
+                    <div class="col-12">
+
+                        <label class="text-muted small fw-bold">
+                            PARENT PROCESS
+                        </label>
+
+                        <div
+                            id="modal-parent-name"
+                            class="p-2 bg-container-high mono-font small text-light border border-secondary text-break"
+                        ></div>
+
+                    </div>
+
+
+                    <div class="col-12">
+
+                        <label class="text-muted small fw-bold">
+                            EXECUTABLE PATH
+                        </label>
+
+                        <div
+                            id="modal-path"
+                            class="p-2 bg-container-high mono-font small text-warning border border-secondary text-break"
+                        ></div>
+
+                    </div>
+
+
+                    <div class="col-12">
+
+                        <label class="text-muted small fw-bold">
+                            COMMAND LINE INVOCATION
+                        </label>
+
+                        <div
+                            id="modal-cmdline"
+                            class="p-2 bg-container-high mono-font small text-info border border-secondary text-break"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer border-top border-secondary">
+
+                <button
+                    type="button"
+                    class="cyber-btn-outline"
+                    data-bs-dismiss="modal"
+                >
+                    Close
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+(function () {
+
+    "use strict";
+
+    /* =========================================================
+       STATE
+       ========================================================= */
+
+    let allProcesses = [];
+
+    let currentRequest = null;
+
+    let refreshTimer = null;
+
+    let isLoading = false;
+
+
+    const API_URL = "/api/v1/processes/";
+
+
+    /* =========================================================
+       ELEMENTS
+       ========================================================= */
+
+    const tbody = document.getElementById(
+        "processes-tbody"
+    );
+
+    const searchInput = document.getElementById(
+        "process-search-input"
+    );
+
+    const refreshButton = document.getElementById(
+        "process-refresh-btn"
+    );
+
+    const processCount = document.getElementById(
+        "process-count"
+    );
+
+    const lastUpdated = document.getElementById(
+        "process-last-updated"
+    );
+
+    const liveStatus = document.getElementById(
+        "process-live-status"
+    );
+
+
+    /* =========================================================
+       ESCAPE HTML
+       ========================================================= */
+
+    function escapeHtml(value) {
+
+        if (
+            value === null ||
+            value === undefined
+        ) {
+            return "";
+        }
+
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+
+    /* =========================================================
+       NORMALIZE API RESPONSE
+       ========================================================= */
+
+    function normalizeResponse(data) {
+
+        if (Array.isArray(data)) {
+            return data;
+        }
+
+        if (
+            data &&
+            Array.isArray(data.results)
+        ) {
+            return data.results;
+        }
+
+        if (
+            data &&
+            Array.isArray(data.data)
+        ) {
+            return data.data;
+        }
+
+        return [];
+    }
+
+
+    /* =========================================================
+       FORMAT TIME
+       ========================================================= */
+
+    function updateLastUpdated() {
+
+        const now = new Date();
+
+        lastUpdated.textContent =
+            now.toLocaleTimeString();
+
+    }
+
+
+    /* =========================================================
+       PARENT PROCESS
+       ========================================================= */
+
+    function getParentProcessName(process) {
+
+        const parentName =
+            process.parent_name ||
+            process.parent_process ||
+            process.parent ||
+            "";
+
+        const ppid =
+            process.ppid !== null &&
+            process.ppid !== undefined
+                ? process.ppid
+                : "N/A";
+
+        if (parentName) {
+
+            return `
+                <div class="parent-process-name">
+                    ${escapeHtml(parentName)}
+                </div>
+
+                <div class="parent-process-pid">
+                    PPID: ${escapeHtml(ppid)}
+                </div>
+            `;
+
+        }
+
+        return `
+            <div class="parent-process-name">
+                Unknown
+            </div>
+
+            <div class="parent-process-pid">
+                PPID: ${escapeHtml(ppid)}
+            </div>
+        `;
+
+    }
+
+
+    /* =========================================================
+       PATH STATUS
+       ========================================================= */
+
+    function getPathStatus(process) {
+
+        const suspiciousFlags =
+            process.suspicious_flags || [];
+
+        const isTemp =
+            process.is_in_temp === true;
+
+        const isSigned =
+            process.is_signed;
+
+        if (
+            isTemp ||
+            suspiciousFlags.length > 0
+        ) {
+
+            return `
+                <span class="badge bg-danger">
+                    Suspicious
+                </span>
+            `;
+
+        }
+
+        if (isSigned === false) {
+
+            return `
+                <span class="badge bg-warning text-dark">
+                    Unsigned
+                </span>
+            `;
+
+        }
+
+        return `
+            <span class="badge bg-success">
+                Normal
+            </span>
+        `;
+
+    }
+
+
+    /* =========================================================
+       RENDER PROCESSES
+       ========================================================= */
+
+    function renderProcesses() {
+
+        const search =
+            searchInput.value
+                .trim()
+                .toLowerCase();
+
+
+        let filtered =
+            allProcesses.filter(function (process) {
+
+                if (!search) {
+                    return true;
+                }
+
+                const searchable = [
+
+                    process.pid,
+
+                    process.ppid,
+
+                    process.name,
+
+                    process.parent_name,
+
+                    process.username,
+
+                    process.cmdline,
+
+                    process.exe_path
+
+                ]
+                    .join(" ")
+                    .toLowerCase();
+
+                return searchable.includes(search);
+
+            });
+
+
+        processCount.textContent =
+            filtered.length;
+
+
+        if (!filtered.length) {
+
+            tbody.innerHTML = `
+                <tr>
+                    <td
+                        colspan="8"
+                        class="process-loading"
+                    >
+                        No matching processes found.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+
+        const rows =
+            filtered.map(function (process) {
+
+                const pid =
+                    process.pid ?? "N/A";
+
+                const ppid =
+                    process.ppid ?? "N/A";
+
+                const name =
+                    process.name || "Unknown";
+
+                const username =
+                    process.username || "SYSTEM";
+
+                const exePath =
+                    process.exe_path || "N/A";
+
+
+                return `
+
+                    <tr>
+
+                        <td>
+                            <span class="process-pid">
+                                ${escapeHtml(pid)}
+                            </span>
+                        </td>
+
+
+                        <td>
+                            <span class="process-pid">
+                                ${escapeHtml(ppid)}
+                            </span>
+                        </td>
+
+
+                        <td>
+                            <span class="process-name">
+                                ${escapeHtml(name)}
+                            </span>
+                        </td>
+
+
+                        <td class="parent-process-cell">
+
+                            ${getParentProcessName(process)}
+
+                        </td>
+
+
+                        <td>
+                            ${escapeHtml(username)}
+                        </td>
+
+
+                        <td
+                            class="process-path"
+                            title="${escapeHtml(exePath)}"
+                        >
+                            ${escapeHtml(exePath)}
+                        </td>
+
+
+                        <td>
+                            ${getPathStatus(process)}
+                        </td>
+
+
+                        <td>
+
+                            <button
+                                type="button"
+                                class="cyber-btn-outline process-details-btn"
+                                data-process='${escapeHtml(
+                                    JSON.stringify(process)
+                                )}'
+                            >
+                                Details
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            });
+
+
+        tbody.innerHTML =
+            rows.join("");
+
+
+        attachDetailButtons();
+
+    }
+
+
+    /* =========================================================
+       DETAIL BUTTONS
+       ========================================================= */
+
+    function attachDetailButtons() {
+
+        const buttons =
+            document.querySelectorAll(
+                ".process-details-btn"
+            );
+
+
+        buttons.forEach(function (button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    let process = {};
+
+                    try {
+
+                        process =
+                            JSON.parse(
+                                this.dataset.process
+                            );
+
+                    } catch (error) {
+
+                        console.error(
+                            "Process details parse error:",
+                            error
+                        );
+
+                        return;
+
+                    }
+
+
+                    document.getElementById(
+                        "modal-name"
+                    ).textContent =
+                        process.name || "Unknown";
+
+
+                    document.getElementById(
+                        "modal-pid"
+                    ).textContent =
+                        process.pid ?? "N/A";
+
+
+                    document.getElementById(
+                        "modal-parent"
+                    ).textContent =
+                        process.ppid ?? "N/A";
+
+
+                    document.getElementById(
+                        "modal-parent-name"
+                    ).textContent =
+                        process.parent_name ||
+                        "Unknown";
+
+
+                    document.getElementById(
+                        "modal-path"
+                    ).textContent =
+                        process.exe_path ||
+                        "N/A";
+
+
+                    document.getElementById(
+                        "modal-cmdline"
+                    ).textContent =
+                        process.cmdline ||
+                        "N/A";
+
+
+                    const modalElement =
+                        document.getElementById(
+                            "processDetailModal"
+                        );
+
+
+                    if (
+                        window.bootstrap &&
+                        bootstrap.Modal
+                    ) {
+
+                        const modal =
+                            bootstrap.Modal.getOrCreateInstance(
+                                modalElement
+                            );
+
+                        modal.show();
+
+                    }
+
+                }
+            );
+
+        });
+
+    }
+
+
+    /* =========================================================
+       LOAD PROCESSES
+       ========================================================= */
+
+    async function loadProcesses() {
+
+        if (isLoading) {
+            return;
+        }
+
+
+        isLoading = true;
+
+
+        if (currentRequest) {
+
+            currentRequest.abort();
+
+        }
+
+
+        currentRequest =
+            new AbortController();
+
+
+        refreshButton.classList.add(
+            "refresh-active"
+        );
+
+
+        try {
+
+            const response =
+                await fetch(
+                    API_URL +
+                    "?_=" +
+                    Date.now(),
+                    {
+                        method: "GET",
+                        cache: "no-store",
+                        headers: {
+                            "Cache-Control":
+                                "no-cache",
+                            "Pragma":
+                                "no-cache"
+                        },
+                        signal:
+                            currentRequest.signal
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "HTTP " +
+                    response.status
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            allProcesses =
+                normalizeResponse(data);
+
+
+            renderProcesses();
+
+
+            updateLastUpdated();
+
+
+            liveStatus.classList.remove(
+                "offline"
+            );
+
+
+            liveStatus.innerHTML = `
+                <span class="live-dot"></span>
+                LIVE
+            `;
+
+
+        } catch (error) {
+
+            if (
+                error.name ===
+                "AbortError"
+            ) {
+
+                return;
+
+            }
+
+
+            console.error(
+                "Process API error:",
+                error
+            );
+
+
+            liveStatus.classList.add(
+                "offline"
+            );
+
+
+            liveStatus.innerHTML = `
+                <span class="live-dot"></span>
+                CONNECTION ERROR
+            `;
+
+
+            tbody.innerHTML = `
+                <tr>
+                    <td
+                        colspan="8"
+                        class="process-error"
+                    >
+                        <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                        Unable to load live process data.
+                    </td>
+                </tr>
+            `;
+
+        } finally {
+
+            isLoading = false;
+
+            currentRequest = null;
+
+            setTimeout(
+                function () {
+
+                    refreshButton.classList.remove(
+                        "refresh-active"
+                    );
+
+                },
+                350
+            );
+
+        }
+
+    }
+
+
+    /* =========================================================
+       SEARCH
+       ========================================================= */
+
+    searchInput.addEventListener(
+        "input",
+        function () {
+
+            renderProcesses();
+
+        }
+    );
+
+
+    /* =========================================================
+       MANUAL REFRESH
+       ========================================================= */
+
+    refreshButton.addEventListener(
+        "click",
+        function () {
+
+            loadProcesses();
+
+        }
+    );
+
+
+    /* =========================================================
+       INITIAL LOAD
+       ========================================================= */
+
+    loadProcesses();
+
+
+    /* =========================================================
+       REAL-TIME POLLING
+       ========================================================= */
+
+    refreshTimer =
+        setInterval(
+            function () {
+
+                loadProcesses();
+
+            },
+            1000
+        );
+
+
+    /* =========================================================
+       CLEANUP
+       ========================================================= */
+
+    window.addEventListener(
+        "beforeunload",
+        function () {
+
+            if (refreshTimer) {
+
+                clearInterval(
+                    refreshTimer
+                );
+
+            }
+
+
+            if (currentRequest) {
+
+                currentRequest.abort();
+
+            }
+
+        }
+    );
+
+
+})();
+
+</script>
+
+{% endblock %}

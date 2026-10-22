@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Stitch Sentinel - Windows Service & Process Monitoring Agent{% endblock %}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Midnight Protocol Custom CSS -->
+    <link href="/static/css/midnight_soc.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <nav id="sidebar">
+        <div class="brand">
+            <i class="fa-solid fa-shield-halved text-cyan fs-4"></i>
+            <span>STITCH SENTINEL</span>
+        </div>
+        <div class="nav flex-column mt-3">
+            <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">
+                <i class="fa-solid fa-chart-line"></i> Dashboard
+            </a>
+            <a href="/processes/" class="nav-link {% if '/processes/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-microchip"></i> Processes
+            </a>
+            <a href="/services/" class="nav-link {% if '/services/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-gears"></i> Windows Services
+            </a>
+            <a href="/event-logs/" class="nav-link {% if '/event-logs/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-list-check"></i> Event Logs
+            </a>
+            <a href="/alerts/" class="nav-link {% if '/alerts/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-triangle-exclamation"></i> Alerts Queue
+            </a>
+            <a href="/investigation/" class="nav-link {% if '/investigation/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-magnifying-glass"></i> SOC Investigation
+            </a>
+            <a href="/ioc/" class="nav-link {% if '/ioc/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-database"></i> IOC Management
+            </a>
+            <a href="/analytics/" class="nav-link {% if '/analytics/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-chart-pie"></i> MITRE Analytics
+            </a>
+            <a href="/reports/" class="nav-link {% if '/reports/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-file-pdf"></i> Reports & Exports
+            </a>
+            <a href="/settings/" class="nav-link {% if '/settings/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-sliders"></i> Agent Settings
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content Shell -->
+    <div id="content">
+        <!-- Top Navbar Header -->
+        <div class="top-navbar">
+            <div class="d-flex align-items-center gap-3">
+                <span class="pulse-critical"></span>
+                <span class="mono-font text-cyan fw-bold">HOST: WIN-EDR-AGENT-01</span>
+                <span class="badge bg-success">AGENT ONLINE</span>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <span class="mono-font text-muted small"><i class="fa-regular fa-clock me-1"></i> <span id="live-clock"></span> UTC</span>
+                <div class="dropdown">
+                    <button class="cyber-btn-outline dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fa-solid fa-user-shield me-1"></i> SOC Analyst
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li><a class="dropdown-item" href="/settings/"><i class="fa-solid fa-gear me-2"></i> Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="/logout/"><i class="fa-solid fa-right-from-bracket me-2"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Bootstrap 5 & Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const clock = document.getElementById("live-clock");
+            if (clock) clock.innerText = now.toUTCString().slice(17, 25);
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

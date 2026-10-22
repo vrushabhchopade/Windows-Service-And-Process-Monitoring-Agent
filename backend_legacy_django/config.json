@@ -1,0 +1,10 @@
+{
+  "backend_url": "http://10.197.136.199:8000",
+  "api_version": "v1",
+  "agent_id": "WIN-EDR-LAPTOP-G9RSGJDA",
+  "auth": {
+    "username": "agent_service",
+    "password": "AgentSecurePassword123!"
+  },
+  "enrollment_token": "gY9yLc4oBbbLcoW8G7q7k5PMIgms73DqlyW6qOoCqMk"
+}
